@@ -1,15 +1,16 @@
 package pl.michal.olszewski.inventoryservice.product;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import pl.michal.olszewski.inventoryservice.catalog.Catalog;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Data
 @NoArgsConstructor
+@Getter
+@Setter
 public class Product {
     @Id
     @GeneratedValue
@@ -21,10 +22,12 @@ public class Product {
     private BigDecimal unitPrice;
 
     @Transient
+    @JsonIgnore
     private Boolean inStock;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "catalogId")
+    @JsonIgnore
     private Catalog catalog;
 
     public Product(String name, String description, BigDecimal unitPrice) {

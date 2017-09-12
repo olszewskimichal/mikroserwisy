@@ -28,7 +28,7 @@ public class InventoryService {
         return byName.orElse(null);
     }
 
-    public List<Inventory> getAvailableInventoryForProducts(String productNames) {
+    List<Inventory> getAvailableInventoryForProducts(String productNames) {
         return inventoryRepository.findByProductNames(Arrays.asList(productNames.split(",")));
     }
 }
