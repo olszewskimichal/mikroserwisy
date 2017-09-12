@@ -1,22 +1,13 @@
 package pl.michal.olszewski.userservice.integration;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
 import pl.michal.olszewski.userservice.user.User;
 import pl.michal.olszewski.userservice.user.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@RunWith(SpringRunner.class)
-public class UserRepositoryTest {
-
-    @Autowired
-    private TestEntityManager entityManager;
+public class UserRepositoryTest extends IntegrationTestBase {
 
     @Autowired
     private UserRepository userRepository;
@@ -34,11 +25,11 @@ public class UserRepositoryTest {
     @Test
     public void shouldFindUserByEmail() {
         User user = new User();
-        user.setEmail("email");
+        user.setEmail("email2");
 
         entityManager.persistAndFlush(user);
 
-        assertThat(userRepository.findByEmail("email").isPresent()).isTrue();
+        assertThat(userRepository.findByEmail("email2").isPresent()).isTrue();
     }
 
     @Test
@@ -48,6 +39,6 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldNotFindUserByEmailWhereNotExists() {
-        assertThat(userRepository.findByEmail("email2").isPresent()).isFalse();
+        assertThat(userRepository.findByEmail("email3").isPresent()).isFalse();
     }
 }

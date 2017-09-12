@@ -38,10 +38,10 @@ public class UserRestControllerTest {
     @Test
     public void shouldGetUserByUserName() {
         User user = new User();
-        user.setUserName("test");
+        user.setUserName("test2");
         userRepository.saveAndFlush(user);
 
-        ResponseEntity<User> userFromApi = thenGetUserByUserNameFromApi("test");
+        ResponseEntity<User> userFromApi = thenGetUserByUserNameFromApi("test2");
 
         assertThat(userFromApi.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(userFromApi.getBody()).isNotNull();
