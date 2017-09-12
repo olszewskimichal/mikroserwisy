@@ -2,23 +2,13 @@ package pl.michal.olszewski.userservice.integration;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
 import pl.michal.olszewski.userservice.user.User;
 
 import javax.persistence.PersistenceException;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-public class UserAuditingTest {
-
-    @Autowired
-    protected TestEntityManager entityManager;
+public class UserAuditingTest extends IntegrationTestBase {
 
     @Test
     public void shouldSetCreatedDateOnUserWhenPersistObject() {
