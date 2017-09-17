@@ -1,4 +1,4 @@
-package pl.michal.olszewski.shoppingcartservice.order;
+package pl.michal.olszewski.orderservice.order;
 
 public enum OrderEventType {
     PURCHASED(1L),
