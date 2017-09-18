@@ -25,6 +25,7 @@ public class CatalogService {
     }
 
     public Set<Product> getProductsForCatalog(Long catalogId) {
+        log.info("Pobieram katalog po id {}", catalogId);
         return Optional.ofNullable(catalogRepository.findOne(catalogId)).map(Catalog::getProducts).orElse(new HashSet<>());
     }
 }

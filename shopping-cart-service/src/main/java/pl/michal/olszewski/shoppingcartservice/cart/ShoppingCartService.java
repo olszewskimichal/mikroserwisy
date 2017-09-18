@@ -1,5 +1,6 @@
 package pl.michal.olszewski.shoppingcartservice.cart;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,8 +24,9 @@ import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
+@Slf4j
 public class ShoppingCartService {
-    public static final BigDecimal TAX = BigDecimal.valueOf(0.6);
+    private static final BigDecimal TAX = BigDecimal.valueOf(0.6);
     private final CartEventRepository cartEventRepository;
     private final RestTemplate restTemplate;
 
@@ -34,12 +36,15 @@ public class ShoppingCartService {
     }
 
     public User getAuthenticatedUser() {
+        log.info("Pobieram przez API zalogowanego uzytkownika");
         return restTemplate.getForObject("http://localhost:8080/api/v1/users/user/test", User.class);
     }
 
     public Boolean addCartEvent(CartEvent cartEvent) {
+        log.info("dodanie cartEventu {}", cartEvent);
         User user = getAuthenticatedUser();
         if (user != null) {
+            log.info("Zapis cartEventu do bazy dla uzytkownika {}", user);
             cartEvent.setUserId(user.getId());
             cartEventRepository.save(cartEvent);
         } else {
@@ -48,27 +53,28 @@ public class ShoppingCartService {
         return true;
     }
 
-    public Boolean addCartEvent(CartEvent cartEvent, User user) {
+    private void addCartEvent(CartEvent cartEvent, User user) {
+        log.info("dodanie cartEventu {} dla uzytkownika {} i zapis do bazy", cartEvent, user);
         if (user != null) {
             cartEvent.setUserId(user.getId());
             cartEventRepository.save(cartEvent);
-        } else {
-            return null;
         }
-        return true;
     }
 
     public ShoppingCart getShoppingCart() {
+        log.info("Pobieram koszyk uzytkownika");
         User user = getAuthenticatedUser();
         ShoppingCart shoppingCart = null;
         if (user != null) {
             Catalog catalog = restTemplate.getForObject("http://localhost:8083/api/v1/catalog", Catalog.class);
+            log.info("Pobrałem katalog {} przez REST i teraz bede agregowac eventy", catalog);
             shoppingCart = aggregateCartEvents(user, catalog);
         }
         return shoppingCart;
     }
 
-    public ShoppingCart aggregateCartEvents(User user, Catalog catalog) {
+    private ShoppingCart aggregateCartEvents(User user, Catalog catalog) {
+        log.info("Agregacja eventów uzytkownika {} i katalogu {}", user, catalog);
         Stream<CartEvent> cartEvents = cartEventRepository.findByUserId(user.getId());
 
         ShoppingCart shoppingCart = new ShoppingCart(catalog);
@@ -77,11 +83,11 @@ public class ShoppingCartService {
                 .forEach(shoppingCart::incorporate);
 
         shoppingCart.getLineItems();
-
         return shoppingCart;
     }
 
-    public CheckoutResult checkout() throws Exception {
+    CheckoutResult checkout() throws Exception {
+        log.info("Checkout");
         CheckoutResult checkoutResult = new CheckoutResult();
 
         // Check available inventory
@@ -94,6 +100,7 @@ public class ShoppingCartService {
                     .stream()
                     .map(LineItem::getProductId).map(Object::toString)
                     .collect(Collectors.joining(","))), Inventory[].class);
+            log.info("Pobralem przez api wszystkie Inventory {} dla produktów w koszyku", Arrays.toString(inventory));
 
             if (inventory != null) {
                 Map<Long, Long> inventoryItems = Arrays.stream(inventory)
@@ -109,9 +116,11 @@ public class ShoppingCartService {
                                     .map(prd ->
                                             new OrderLineItem(prd.getProduct().getName(), prd.getProductId(), prd.getQuantity(), prd.getProduct().getUnitPrice(), TAX))
                                     .collect(Collectors.toList()), Order.class);
+                    log.info("Po wysłaniu POSTem zamowienia wyglada następujaco {}", orderResponse);
 
                     if (orderResponse != null) {
                         // Order creation successful
+                        log.info("Order created");
                         checkoutResult.setResultMessage("Order created");
 
                         // Add order event
@@ -131,7 +140,7 @@ public class ShoppingCartService {
         return checkoutResult;
     }
 
-    public Boolean checkAvailableInventory(CheckoutResult checkoutResult, ShoppingCart currentCart, Map<Long, Long> inventoryItems) {
+    private Boolean checkAvailableInventory(CheckoutResult checkoutResult, ShoppingCart currentCart, Map<Long, Long> inventoryItems) {
         Boolean hasInventory = true;
         // Determine if inventory is available
 
@@ -145,6 +154,7 @@ public class ShoppingCartService {
                     .map(LineItem::getProductId).map(Object::toString)
                     .collect(Collectors.joining(", "));
             checkoutResult.setResultMessage(String.format("Insufficient inventory available for %s. " + "Lower the quantity of these products and try again.", productIdList));
+            log.info("Insufficient inventory available for {}", productIdList);
             hasInventory = false;
         }
 

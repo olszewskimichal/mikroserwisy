@@ -1,5 +1,6 @@
 package pl.michal.olszewski.orderservice.order;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.michal.olszewski.orderservice.account.Account;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderEventRepository orderEventRepository;
@@ -38,7 +40,8 @@ public class OrderService {
         return newOrder;
     }
 
-    public Boolean addOrderEvent(OrderEvent orderEvent) throws Exception {
+    public Boolean addOrderEvent(OrderEvent orderEvent) {
+        log.info("Próba dodania zdarzenia dla zamowienia {}", orderEvent);
         // Get the order for the event
         Order order = orderRepository.findOne(orderEvent.getOrderId());
         // Save the order event
@@ -47,6 +50,7 @@ public class OrderService {
     }
 
     public Order getOrder(Long orderId) {
+        log.info("Pobieram zamowienie o id {}", orderId);
         // Get the order for the event
         Order order = orderRepository.findOne(orderId);
 
@@ -57,9 +61,9 @@ public class OrderService {
         return order;
     }
 
-    public List<Order> getOrdersForAccount(String userName){
-        List<Order> orders;
-        orders = orderRepository.findByUserName(userName);
+    public List<Order> getOrdersForUserName(String userName) {
+        log.info("Pobieram zamowienia dla uzytkownika {}", userName);
+        List<Order> orders = orderRepository.findByUserName(userName);
 
         return orders.stream()
                 .map(order -> getOrder(order.getOrderId()))

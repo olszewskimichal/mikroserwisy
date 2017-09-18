@@ -1,6 +1,7 @@
 package pl.michal.olszewski.orderservice.order;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import pl.michal.olszewski.orderservice.address.Address;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "orders")
+@Slf4j
 public class Order implements Serializable {
     @Id
     @GeneratedValue
@@ -53,7 +55,7 @@ public class Order implements Serializable {
      * @return the aggregate {@link Order} with the aggregated order status
      */
     public Order incorporate(OrderEvent orderEvent) {
-
+        log.info("Incorporate dla eventu {} prze operacja status to {}", orderEvent, orderStatus);
         if (orderStatus == null)
             orderStatus = OrderStatus.PURCHASED;
 
@@ -91,6 +93,7 @@ public class Order implements Serializable {
                 // Invalid event type with regards to the order status
                 break;
         }
+        log.info("Po incorporate status to {}", orderStatus);
 
         return this;
     }

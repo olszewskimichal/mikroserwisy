@@ -20,13 +20,14 @@ public class AccountService {
     }
 
     public List<Account> getUserAccounts() {
+        log.info("pobieram konta uzytkownika ");
         List<Account> accounts = new ArrayList<>();
         User user = restTemplate.getForObject("http://localhost:8080/api/v1/users/user/test", User.class);
         if (user == null) {
             return accounts;
         }
-        log.info(user.toString());
         accounts = accountRepository.findAccountsByUserName(user.getUserName());
+        log.info("Konta uzytkownika {} to {}", user, accounts);
         return accounts;
     }
 }

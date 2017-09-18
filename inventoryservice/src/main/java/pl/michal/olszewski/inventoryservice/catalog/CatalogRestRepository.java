@@ -1,5 +1,6 @@
 package pl.michal.olszewski.inventoryservice.catalog;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/catalogs")
+@Slf4j
 public class CatalogRestRepository {
 
     private final CatalogService catalogService;
@@ -20,15 +22,22 @@ public class CatalogRestRepository {
 
     @GetMapping(path = "/{catalogId}/products")
     public ResponseEntity<Set<Product>> getProductsForCatalog(@PathVariable("catalogId") Long catalogId) {
+        log.info("Pobieram katalog po id {}", catalogId);
         return Optional.ofNullable(catalogService.getProductsForCatalog(catalogId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .map(result -> {
+                    log.info("Pobrałem produkty {}", result.toString());
+                    return new ResponseEntity<>(result, HttpStatus.OK);
+                })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(path = "/search/findCatalogByCatalogNumber")
     public ResponseEntity getProducstFromCatalogNumber(@RequestParam("catalogNumber") Long catalogNumber) {
         return Optional.ofNullable(catalogService.getCatalogByCatalogNumber(catalogNumber))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .map(result -> {
+                    log.info("Pobrałem kategorie {}", result.toString());
+                    return new ResponseEntity<>(result, HttpStatus.OK);
+                })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

@@ -1,5 +1,6 @@
 package pl.michal.olszewski.orderservice.order;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping(path = "/api/v1")
+@Slf4j
 public class OrderController {
     private final OrderService orderService;
 
@@ -20,14 +22,16 @@ public class OrderController {
     }
 
     @GetMapping(path = "/accounts/{userName}/orders")
-    public ResponseEntity getOrders(@PathVariable("userName") String userName){
-        return Optional.ofNullable(orderService.getOrdersForAccount(userName))
+    public ResponseEntity getOrders(@PathVariable("userName") String userName) {
+        log.info("Pobieram zamowienia dla uzytkownika {}", userName);
+        return Optional.ofNullable(orderService.getOrdersForUserName(userName))
                 .map(a -> new ResponseEntity<>(a, OK))
                 .orElseThrow(() -> new IllegalArgumentException("Accounts for user do not exist"));
     }
 
     @PostMapping(path = "/orders/{orderId}/events")
     public ResponseEntity addOrderEvent(@RequestBody OrderEvent orderEvent, @PathVariable("orderId") Long orderId) throws Exception {
+        log.info("POST zdarzenia {} dla zamowienia o id {}", orderEvent, orderId);
         assert orderEvent != null;
         assert orderId != null;
         assert !Objects.equals(orderId, orderEvent.getOrderId());
@@ -38,6 +42,7 @@ public class OrderController {
 
     @RequestMapping(path = "/orders/{orderId}")
     public ResponseEntity getOrder(@PathVariable("orderId") Long orderId) throws Exception {
+        log.info("Pobieram  zdarzenie o id {}", orderId);
         assert orderId != null;
         return Optional.ofNullable(orderService.getOrder(orderId))
                 .map(a -> new ResponseEntity<>(a, OK))
@@ -46,6 +51,7 @@ public class OrderController {
 
     @PostMapping(path = "/orders")
     public ResponseEntity createOrder(@RequestBody List<OrderLineItem> lineItems) throws Exception {
+        log.info("POST zamowienia dla list itemów {}", lineItems);
         assert lineItems != null;
         assert lineItems.size() > 0;
         return Optional.ofNullable(orderService.createOrder(lineItems))

@@ -1,12 +1,14 @@
 package pl.michal.olszewski.shoppingcartservice.cart;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import pl.michal.olszewski.shoppingcartservice.catalog.Catalog;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
+@Slf4j
 public class ShoppingCart {
     //Mapa id produktów i ich ilości
     private Map<Long, Integer> productMap = new HashMap<>();
@@ -17,7 +19,8 @@ public class ShoppingCart {
         this.catalog = catalog;
     }
 
-    public List<LineItem> getLineItems() {
+    List<LineItem> getLineItems() {
+        log.info("getLineItems dla listy przedmiotów {}", productMap);
         lineItems = productMap.entrySet()
                 .stream()
                 .map(item -> new LineItem(item.getKey(), catalog.getProducts().stream()
@@ -30,7 +33,7 @@ public class ShoppingCart {
         if (lineItems.stream().anyMatch(item -> item.getProduct() == null)) {
             throw new IllegalArgumentException("Product not found in catalog");
         }
-
+        log.info("getLineItems po przefiltrowaniu wyszło {}", lineItems);
         return lineItems;
     }
 
@@ -38,12 +41,13 @@ public class ShoppingCart {
         this.lineItems = lineItems;
     }
 
-    public ShoppingCart incorporate(CartEvent cartEvent) {
+    ShoppingCart incorporate(CartEvent cartEvent) {
+        log.info("incorporate dla eventu {}", cartEvent);
         List<CartEventType> validCartEventTypes = Arrays.asList(CartEventType.ADD_ITEM, CartEventType.REMOVE_ITEM);
 
         // The CartEvent's type must be either ADD_ITEM or REMOVE_ITEM
         CartEventType eventType = CartEventType.fromValue(cartEvent.getCartEventType());
-        if (validCartEventTypes.contains(eventType)){
+        if (validCartEventTypes.contains(eventType)) {
             // Update the aggregate view of each line item's quantity from the event type
             productMap.put(cartEvent.getProductId(), productMap.getOrDefault(cartEvent.getProductId(), 0) + (cartEvent.getQuantity() * (cartEvent.getCartEventType().equals(CartEventType.ADD_ITEM.getValue()) ? 1 : -1)));
         }
@@ -51,7 +55,7 @@ public class ShoppingCart {
         return this;
     }
 
-    public static Boolean isTerminal(CartEventType eventType) {
+    static Boolean isTerminal(CartEventType eventType) {
         return (eventType == CartEventType.CLEAR_CART || eventType == CartEventType.CHECKOUT);
     }
 }
