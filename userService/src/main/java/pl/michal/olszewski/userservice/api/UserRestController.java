@@ -17,6 +17,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api/v1/users/")
 @Slf4j
 @RestController
+@CrossOrigin
 public class UserRestController {
 
     private final UserService userService;

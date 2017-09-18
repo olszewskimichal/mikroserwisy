@@ -12,7 +12,6 @@ public class ShoppingCartServiceApplication {
 	@Bean
 	public RestTemplate loadRestTemplate() {
 		return new RestTemplateBuilder().build();
-
 	}
 
 	public static void main(String[] args) {

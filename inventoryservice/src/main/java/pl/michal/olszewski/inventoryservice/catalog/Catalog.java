@@ -17,7 +17,7 @@ public class Catalog {
     private Long id;
     private Long catalogNumber;
     private String name;
-    @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Product> products = new HashSet<>();
 
     public Catalog(Long catalogNumber, String name) {
@@ -28,11 +28,9 @@ public class Catalog {
 
     public void addProduct(Product product) {
         products.add(product);
-        product.setCatalog(this);
     }
 
     public void removeProduct(Product product) {
         products.remove(product);
-        product.setCatalog(null);
     }
 }

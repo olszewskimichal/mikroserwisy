@@ -25,11 +25,6 @@ public class Product {
     @JsonIgnore
     private Boolean inStock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "catalogId")
-    @JsonIgnore
-    private Catalog catalog;
-
     public Product(String name, String description, BigDecimal unitPrice) {
         this.name = name;
         this.description = description;

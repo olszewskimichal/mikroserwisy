@@ -20,7 +20,7 @@ public class Order implements Serializable {
     private String userName;
     @Transient
     private OrderStatus orderStatus;
-    @OneToMany(mappedBy = "lineItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderLineItem> lineItems = new HashSet<>();
     @Embedded
     private Address shippingAddress;

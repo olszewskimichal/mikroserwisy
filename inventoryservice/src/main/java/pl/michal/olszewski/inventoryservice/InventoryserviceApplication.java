@@ -33,7 +33,7 @@ public class InventoryserviceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        Product product = new Product("test", "", BigDecimal.TEN);
+        Product product = new Product("test", "opis", BigDecimal.TEN);
         Catalog catalog = new Catalog(997L, "policyjny");
         catalog.addProduct(product);
         catalogRepository.save(catalog);
