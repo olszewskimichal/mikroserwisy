@@ -2,16 +2,19 @@ package pl.michal.olszewski.accountservice.unit.account;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import pl.michal.olszewski.accountservice.address.Address;
 import pl.michal.olszewski.accountservice.base.BaseEntity;
 import pl.michal.olszewski.accountservice.credit.CreditCard;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
 public class Account extends BaseEntity {
     @Id
     @GeneratedValue
@@ -33,9 +36,17 @@ public class Account extends BaseEntity {
             @AttributeOverride(name = "zipCode", column = @Column(name = "billing_zipCode"))})
     private Address billingAddress;
     private String userName;
+    private String accountNumber;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CreditCard> creditCards;
+    private Set<CreditCard> creditCards = new HashSet<>();
+
+    public Account(Address shippingAddress, Address billingAddress, String userName, String accountNumber) {
+        this.shippingAddress = shippingAddress;
+        this.billingAddress = billingAddress;
+        this.userName = userName;
+        this.accountNumber = accountNumber;
+    }
 
     public void addCreditCard(CreditCard creditCard) {
         creditCards.add(creditCard);

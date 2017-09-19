@@ -1,0 +1,120 @@
+<div class="container hidden-content" ng-model="accounts">
+    <div ng-repeat="item in accounts" class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Account Settings</div>
+                <ul class="list-group list-group-details accounts">
+                    <li class="list-group-item">
+                        <div class="account-username">
+                            <div class="panel-heading">Username: <span
+                                    class="panel-heading ng-binding">{{ item.userName }}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="account-number">
+                            <div class="panel-heading">Account number: <span
+                                    class="panel-heading ng-binding">{{ item.accountNumber }}</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-12 panel-head-list">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading"><i class="fa fa-credit-card icon-head"></i>Credit Cards</div>
+                <ul class="list-group list-group-details accounts">
+                    <li ng-repeat="creditCard in item.creditCards" class="list-group-item">
+                        <div class="credit-cart-number">
+                            <div class="panel-heading">Number: <span
+                                    class="panel-heading ng-binding">{{ creditCard.number }}</span>
+                            </div>
+                        </div>
+                        <div class="credit-card-type">
+                            <div class="panel-heading">Type: <span
+                                    class="panel-heading ng-binding">{{ creditCard.creditCardType }}</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-12 panel-head-list">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading"><i class="fa fa-home icon-head"></i>Addresses</div>
+                <ul class="list-group list-group-details accounts">
+                    <li ng-if="item.shippingAddress" class="list-group-item">
+                        <div>
+                            <div class="panel-heading">Type: <span
+                                    class="panel-heading ng-binding">Shipping address</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">Street 1: <span
+                                    class="panel-heading ng-binding">{{ item.shippingAddress.street }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">City: <span
+                                    class="panel-heading ng-binding">{{ item.shippingAddress.city }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">State: <span
+                                    class="panel-heading ng-binding">{{ item.shippingAddress.state }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">Zip Code: <span
+                                    class="panel-heading ng-binding">{{ item.shippingAddress.zipCode }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">Country: <span
+                                    class="panel-heading ng-binding">{{ item.shippingAddress.country }}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li ng-if="item.billingAddress" class="list-group-item">
+                        <div>
+                            <div class="panel-heading">Type: <span
+                                    class="panel-heading ng-binding">Billing address</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">Street: <span
+                                    class="panel-heading ng-binding">{{ item.billingAddress.street }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">City: <span
+                                    class="panel-heading ng-binding">{{ item.billingAddress.city }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">State: <span
+                                    class="panel-heading ng-binding">{{ item.billingAddress.state }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">Zip Code: <span
+                                    class="panel-heading ng-binding">{{ item.billingAddress.zipCode }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="panel-heading">Country: <span
+                                    class="panel-heading ng-binding">{{ item.billingAddress.country }}</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

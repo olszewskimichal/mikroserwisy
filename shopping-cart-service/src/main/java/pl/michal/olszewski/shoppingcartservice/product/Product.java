@@ -15,7 +15,6 @@ public class Product implements Serializable {
     private String description;
     private BigDecimal unitPrice;
     private Boolean inStock;
-    private Catalog catalog;
 
     public Product(String name, String description, BigDecimal unitPrice) {
         this.name = name;

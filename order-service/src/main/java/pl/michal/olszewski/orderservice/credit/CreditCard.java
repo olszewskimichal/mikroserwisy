@@ -9,12 +9,9 @@ import java.io.Serializable;
 public class CreditCard implements Serializable {
     private Long id;
     private String number;
-    private Long creditCardType;
+    private CreditCardType creditCardType;
     private Long createdAt;
     private Long lastModified;
     private Account account;
 
-    public CreditCardType getCreditCardType() {
-        return CreditCardType.fromValue(creditCardType);
-    }
 }

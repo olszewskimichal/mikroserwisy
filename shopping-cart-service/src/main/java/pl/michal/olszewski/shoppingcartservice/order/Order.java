@@ -14,4 +14,6 @@ public class Order implements Serializable {
     private OrderStatus orderStatus;
     private List<OrderLineItem> lineItems = new ArrayList<>();
     private Address shippingAddress;
+    private Long createdAt;
+    private Long lastModified;
 }

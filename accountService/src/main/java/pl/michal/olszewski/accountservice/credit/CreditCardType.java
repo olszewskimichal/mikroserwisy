@@ -19,4 +19,8 @@ public enum CreditCardType {
         }
         return UNKNOWN;
     }
+
+    public long getValue() {
+        return value;
+    }
 }

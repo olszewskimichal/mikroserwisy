@@ -8,6 +8,9 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.client.RestTemplate;
+import pl.michal.olszewski.accountservice.address.Address;
+import pl.michal.olszewski.accountservice.credit.CreditCard;
+import pl.michal.olszewski.accountservice.credit.CreditCardType;
 import pl.michal.olszewski.accountservice.unit.account.Account;
 import pl.michal.olszewski.accountservice.unit.account.AccountRepository;
 
@@ -30,8 +33,12 @@ public class AccountserviceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        Account account = new Account();
-        account.setUserName("test");
+        Address address = new Address("Piwnika Ponurego", "KUJ-POM", "Bydgoszcz", "Polska", "85-791");
+        Account account = new Account(address, null, "test", "accountNumber");
+        CreditCard creditCard = new CreditCard();
+        creditCard.setCreditCardType(CreditCardType.VISA.getValue());
+        creditCard.setNumber("NUMER KONTA");
+        account.addCreditCard(creditCard);
         accountRepository.save(account);
     }
 }

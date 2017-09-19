@@ -37,6 +37,7 @@ public class OrderService {
         Order newOrder = new Order(defaultAccount.getUserName(), defaultAccount.getShippingAddress());
         newOrder.setLineItems(new HashSet<>(lineItems));
         newOrder = orderRepository.save(newOrder);
+        log.info(newOrder.toString());
         return newOrder;
     }
 
@@ -54,8 +55,8 @@ public class OrderService {
         // Get the order for the event
         Order order = orderRepository.findOne(orderId);
 
-        Stream<OrderEvent> orderEvents = orderEventRepository.findByOrderId(order.getOrderId());
-        orderEvents
+        List<OrderEvent> orderEvents = orderEventRepository.findByOrderId(order.getOrderId());
+        orderEvents.stream()
                 .filter(orderEvent -> orderEvent.getType() != OrderEventType.DELIVERED)
                 .forEach(order::incorporate);
         return order;

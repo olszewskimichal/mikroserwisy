@@ -3,6 +3,7 @@ package pl.michal.olszewski.shoppingcartservice.cart;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import pl.michal.olszewski.shoppingcartservice.catalog.Catalog;
 import pl.michal.olszewski.shoppingcartservice.inventory.Inventory;
@@ -40,6 +41,7 @@ public class ShoppingCartService {
         return restTemplate.getForObject("http://localhost:8080/api/v1/users/user/test", User.class);
     }
 
+    @Transactional
     public Boolean addCartEvent(CartEvent cartEvent) {
         log.info("dodanie cartEventu {}", cartEvent);
         User user = getAuthenticatedUser();
@@ -48,8 +50,10 @@ public class ShoppingCartService {
             cartEvent.setUserId(user.getId());
             cartEventRepository.save(cartEvent);
         } else {
+            log.error("Z jakiegos powodu nie pobralem uzytkownika");
             return null;
         }
+        log.info(cartEvent.toString());
         return true;
     }
 
@@ -61,6 +65,7 @@ public class ShoppingCartService {
         }
     }
 
+    @Transactional
     public ShoppingCart getShoppingCart() {
         log.info("Pobieram koszyk uzytkownika");
         User user = getAuthenticatedUser();
@@ -75,14 +80,17 @@ public class ShoppingCartService {
 
     private ShoppingCart aggregateCartEvents(User user, Catalog catalog) {
         log.info("Agregacja eventów uzytkownika {} i katalogu {}", user, catalog);
-        Stream<CartEvent> cartEvents = cartEventRepository.findByUserId(user.getId());
+        List<CartEvent> cartEvents = cartEventRepository.findByUserId(user.getId());
+
 
         ShoppingCart shoppingCart = new ShoppingCart(catalog);
         // Aggregate the state of the shopping cart
-        cartEvents.filter(cartEvent -> !ShoppingCart.isTerminal(CartEventType.fromValue(cartEvent.getCartEventType())))
-                .forEach(shoppingCart::incorporate);
+        cartEvents.stream()
+                .filter(cartEvent -> {
+                    return !ShoppingCart.isTerminal(cartEvent.getCartEventType());
+                }).forEach(shoppingCart::incorporate);
 
-        shoppingCart.getLineItems();
+        shoppingCart.convertLineItems();
         return shoppingCart;
     }
 
@@ -95,10 +103,11 @@ public class ShoppingCartService {
 
 
         if (currentCart != null) {
+            currentCart.convertLineItems();
             // Reconcile the current cart with the available inventory
-            Inventory[] inventory = restTemplate.getForObject(String.format("http://localhost:8082/api/v1/inventory?productIds=%s", currentCart.getLineItems()
+            Inventory[] inventory = restTemplate.getForObject(String.format("http://localhost:8082/api/v1/inventory?productNames=%s", currentCart.getLineItems()
                     .stream()
-                    .map(LineItem::getProductId).map(Object::toString)
+                    .map(v -> v.getProduct().getName()).map(Object::toString)
                     .collect(Collectors.joining(","))), Inventory[].class);
             log.info("Pobralem przez api wszystkie Inventory {} dla produktów w koszyku", Arrays.toString(inventory));
 
@@ -124,6 +133,7 @@ public class ShoppingCartService {
                         checkoutResult.setResultMessage("Order created");
 
                         // Add order event
+                        log.info(orderResponse.toString());
                         restTemplate.postForEntity(String.format("http://localhost:8086/api/v1/orders/%s/events", orderResponse.getOrderId()), new OrderEvent(OrderEventType.CREATED, orderResponse.getOrderId()), ResponseEntity.class);
                         checkoutResult.setOrder(orderResponse);
                     }
@@ -143,7 +153,6 @@ public class ShoppingCartService {
     private Boolean checkAvailableInventory(CheckoutResult checkoutResult, ShoppingCart currentCart, Map<Long, Long> inventoryItems) {
         Boolean hasInventory = true;
         // Determine if inventory is available
-
         List<LineItem> inventoryAvailable = currentCart.getLineItems()
                 .stream()
                 .filter(item -> inventoryItems.get(item.getProductId()) - item.getQuantity() < 0)

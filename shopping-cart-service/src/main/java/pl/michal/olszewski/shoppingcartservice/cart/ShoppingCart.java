@@ -17,9 +17,16 @@ public class ShoppingCart {
 
     public ShoppingCart(Catalog catalog) {
         this.catalog = catalog;
+        this.lineItems = new ArrayList<>();
     }
 
-    List<LineItem> getLineItems() {
+    public List<LineItem> getLineItems() {
+        if (lineItems == null)
+            lineItems = new ArrayList<>();
+        return lineItems;
+    }
+
+    void convertLineItems() {
         log.info("getLineItems dla listy przedmiotów {}", productMap);
         lineItems = productMap.entrySet()
                 .stream()
@@ -34,7 +41,6 @@ public class ShoppingCart {
             throw new IllegalArgumentException("Product not found in catalog");
         }
         log.info("getLineItems po przefiltrowaniu wyszło {}", lineItems);
-        return lineItems;
     }
 
     public void setLineItems(List<LineItem> lineItems) {
@@ -46,10 +52,10 @@ public class ShoppingCart {
         List<CartEventType> validCartEventTypes = Arrays.asList(CartEventType.ADD_ITEM, CartEventType.REMOVE_ITEM);
 
         // The CartEvent's type must be either ADD_ITEM or REMOVE_ITEM
-        CartEventType eventType = CartEventType.fromValue(cartEvent.getCartEventType());
+        CartEventType eventType = cartEvent.getCartEventType();
         if (validCartEventTypes.contains(eventType)) {
             // Update the aggregate view of each line item's quantity from the event type
-            productMap.put(cartEvent.getProductId(), productMap.getOrDefault(cartEvent.getProductId(), 0) + (cartEvent.getQuantity() * (cartEvent.getCartEventType().equals(CartEventType.ADD_ITEM.getValue()) ? 1 : -1)));
+            productMap.put(cartEvent.getProductId(), productMap.getOrDefault(cartEvent.getProductId(), 0) + (cartEvent.getQuantity() * (cartEvent.getCartEventType().equals(CartEventType.ADD_ITEM) ? 1 : -1)));
         }
 
         return this;

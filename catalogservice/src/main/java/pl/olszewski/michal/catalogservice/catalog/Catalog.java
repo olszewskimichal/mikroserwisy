@@ -16,11 +16,9 @@ public class Catalog implements Serializable {
 
     public void addProduct(Product product) {
         products.add(product);
-        product.setCatalog(this);
     }
 
     public void removeProduct(Product product) {
         products.remove(product);
-        product.setCatalog(null);
     }
 }

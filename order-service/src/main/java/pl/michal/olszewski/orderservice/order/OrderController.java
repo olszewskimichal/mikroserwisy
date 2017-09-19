@@ -14,6 +14,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping(path = "/api/v1")
 @Slf4j
+@CrossOrigin
 public class OrderController {
     private final OrderService orderService;
 

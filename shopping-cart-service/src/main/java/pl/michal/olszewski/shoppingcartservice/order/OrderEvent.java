@@ -1,7 +1,10 @@
 package pl.michal.olszewski.shoppingcartservice.order;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class OrderEvent implements Serializable {
     private Long id;
     private OrderEventType type;

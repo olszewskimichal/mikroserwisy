@@ -10,6 +10,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "api/v1")
 @Slf4j
+@CrossOrigin
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 

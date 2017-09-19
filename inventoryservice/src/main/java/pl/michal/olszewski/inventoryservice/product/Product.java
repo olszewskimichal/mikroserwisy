@@ -21,14 +21,12 @@ public class Product {
     private String name;
     private String description;
     private BigDecimal unitPrice;
-
-    @Transient
-    @JsonIgnore
     private Boolean inStock;
 
     public Product(String name, String description, BigDecimal unitPrice) {
         this.name = name;
         this.description = description;
         this.unitPrice = unitPrice;
+        this.inStock = true;
     }
 }

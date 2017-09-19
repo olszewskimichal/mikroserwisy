@@ -2,6 +2,9 @@ package pl.michal.olszewski.orderservice.order;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pl.michal.olszewski.orderservice.address.Address;
 
 import javax.persistence.*;
@@ -15,6 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "orders")
 @Slf4j
+@EntityListeners(AuditingEntityListener.class)
 public class Order implements Serializable {
     @Id
     @GeneratedValue
@@ -26,6 +30,12 @@ public class Order implements Serializable {
     private Set<OrderLineItem> lineItems = new HashSet<>();
     @Embedded
     private Address shippingAddress;
+
+    @CreatedDate
+    private Long createdAt;
+
+    @LastModifiedDate
+    private Long lastModified;
 
     public Order() {
         this.orderStatus = OrderStatus.PURCHASED;

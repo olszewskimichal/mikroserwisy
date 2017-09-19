@@ -14,5 +14,6 @@ public class Account implements Serializable {
     private Address shippingAddress;
     private Address billingAddress;
     private String userName;
+    private String accountNumber;
     private Set<CreditCard> creditCards;
 }
