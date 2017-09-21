@@ -36,29 +36,28 @@ public class ShoppingCartService {
         this.restTemplate = restTemplate;
     }
 
-    public User getAuthenticatedUser() {
+    private User getAuthenticatedUser() {
         log.info("Pobieram przez API zalogowanego uzytkownika");
         return restTemplate.getForObject("http://localhost:8080/api/v1/users/user/test", User.class);
     }
 
     @Transactional
     public Boolean addCartEvent(CartEvent cartEvent) {
-        log.info("dodanie cartEventu {}", cartEvent);
         User user = getAuthenticatedUser();
         if (user != null) {
             log.info("Zapis cartEventu do bazy dla uzytkownika {}", user);
             cartEvent.setUserId(user.getId());
             cartEventRepository.save(cartEvent);
+            log.debug("Dodano cartEvent i zapisano w bazie {}", cartEvent);
         } else {
             log.error("Z jakiegos powodu nie pobralem uzytkownika");
             return null;
         }
-        log.info(cartEvent.toString());
         return true;
     }
 
     private void addCartEvent(CartEvent cartEvent, User user) {
-        log.info("dodanie cartEventu {} dla uzytkownika {} i zapis do bazy", cartEvent, user);
+        log.debug("dodanie cartEventu {} dla uzytkownika {} i zapis do bazy", cartEvent, user);
         if (user != null) {
             cartEvent.setUserId(user.getId());
             cartEventRepository.save(cartEvent);
@@ -72,7 +71,7 @@ public class ShoppingCartService {
         ShoppingCart shoppingCart = null;
         if (user != null) {
             Catalog catalog = restTemplate.getForObject("http://localhost:8083/api/v1/catalog", Catalog.class);
-            log.info("Pobrałem katalog {} przez REST i teraz bede agregowac eventy", catalog);
+            log.debug("Pobrałem katalog {} przez REST i teraz bede agregowac eventy", catalog);
             shoppingCart = aggregateCartEvents(user, catalog);
         }
         return shoppingCart;
@@ -86,9 +85,7 @@ public class ShoppingCartService {
         ShoppingCart shoppingCart = new ShoppingCart(catalog);
         // Aggregate the state of the shopping cart
         cartEvents.stream()
-                .filter(cartEvent -> {
-                    return !ShoppingCart.isTerminal(cartEvent.getCartEventType());
-                }).forEach(shoppingCart::incorporate);
+                .filter(cartEvent -> !ShoppingCart.isTerminal(cartEvent.getCartEventType())).forEach(shoppingCart::incorporate);
 
         shoppingCart.convertLineItems();
         return shoppingCart;
@@ -109,7 +106,7 @@ public class ShoppingCartService {
                     .stream()
                     .map(v -> v.getProduct().getName()).map(Object::toString)
                     .collect(Collectors.joining(","))), Inventory[].class);
-            log.info("Pobralem przez api wszystkie Inventory {} dla produktów w koszyku", Arrays.toString(inventory));
+            log.debug("Pobralem przez api wszystkie Inventory {} dla produktów w koszyku", Arrays.toString(inventory));
 
             if (inventory != null) {
                 Map<Long, Long> inventoryItems = Arrays.stream(inventory)
@@ -125,15 +122,14 @@ public class ShoppingCartService {
                                     .map(prd ->
                                             new OrderLineItem(prd.getProduct().getName(), prd.getProductId(), prd.getQuantity(), prd.getProduct().getUnitPrice(), TAX))
                                     .collect(Collectors.toList()), Order.class);
-                    log.info("Po wysłaniu POSTem zamowienia wyglada następujaco {}", orderResponse);
+                    log.debug("Po wysłaniu POSTem zamowienia wyglada następujaco {}", orderResponse);
 
                     if (orderResponse != null) {
                         // Order creation successful
-                        log.info("Order created");
                         checkoutResult.setResultMessage("Order created");
 
                         // Add order event
-                        log.info(orderResponse.toString());
+                        log.info("Zamowienie stworzone {}",orderResponse);
                         restTemplate.postForEntity(String.format("http://localhost:8086/api/v1/orders/%s/events", orderResponse.getOrderId()), new OrderEvent(OrderEventType.CREATED, orderResponse.getOrderId()), ResponseEntity.class);
                         checkoutResult.setOrder(orderResponse);
                     }

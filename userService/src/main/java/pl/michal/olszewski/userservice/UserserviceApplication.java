@@ -22,13 +22,12 @@ public class UserserviceApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... strings) throws Exception {
+    public void run(String... strings) {
         User user = new User();
         user.setUserName("test");
         user.setEmail("email");
         user.setFirstName("firstName");
         user.setLastName("lastName");
-        log.info(user.toString());
         userRepository.save(user);
     }
 }

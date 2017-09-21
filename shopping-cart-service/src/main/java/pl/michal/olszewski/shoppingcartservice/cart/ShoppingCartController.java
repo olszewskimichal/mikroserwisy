@@ -20,7 +20,7 @@ public class ShoppingCartController {
 
     @PostMapping(path = "/events")
     public ResponseEntity addCartEvent(@RequestBody CartEvent cartEvent) throws Exception {
-        log.info("Próba zapisu przez API cartEventu {}", cartEvent);
+        log.info("Zapis przez API cartEventu {}", cartEvent);
         return Optional.ofNullable(shoppingCartService.addCartEvent(cartEvent))
                 .map(event -> new ResponseEntity(HttpStatus.NO_CONTENT))
                 .orElseThrow(() -> new Exception("Could not find shopping cart"));
@@ -28,7 +28,7 @@ public class ShoppingCartController {
 
     @PostMapping(path = "/checkout")
     public ResponseEntity checkoutCart() throws Exception {
-        log.info("Próba POSTa checkoutu");
+        log.info("POST checkout");
         return Optional.ofNullable(shoppingCartService.checkout())
                 .map(checkoutResult -> new ResponseEntity<>(checkoutResult, HttpStatus.OK))
                 .orElseThrow(() -> new Exception("Could not checkout"));

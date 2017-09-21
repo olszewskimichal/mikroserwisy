@@ -27,7 +27,6 @@ public class CatalogService {
     }
 
     private Catalog getCatalogFromAPI(Long catalogId) {
-        log.info("pobieram katalog o id {}", catalogId);
         return restTemplate.getForObject(String.format("http://localhost:8082/api/v1/catalogs/search/findCatalogByCatalogNumber?catalogNumber=%s",
                 catalogId), Catalog.class);
     }
@@ -44,7 +43,7 @@ public class CatalogService {
         if (activeCatalog == null) throw new IllegalArgumentException("Nie moze byc zadnego aktywnego katalogu");
         Catalog catalog = getCatalogFromAPI(activeCatalog.getCatalogId());
         catalog.setProducts(new HashSet<>(getProductsFromAPI(catalog)));
-        log.info("Pobrany katalog to {}", catalog);
+        log.debug("Pobrany katalog to {}", catalog);
         return catalog;
     }
 }

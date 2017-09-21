@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class ShoppingCart {
     //Mapa id produktów i ich ilości
     private Map<Long, Integer> productMap = new HashMap<>();
-    private List<LineItem> lineItems = new ArrayList<>();
+    private List<LineItem> lineItems;
     private Catalog catalog;
 
     public ShoppingCart(Catalog catalog) {
@@ -41,10 +41,6 @@ public class ShoppingCart {
             throw new IllegalArgumentException("Product not found in catalog");
         }
         log.info("getLineItems po przefiltrowaniu wyszło {}", lineItems);
-    }
-
-    public void setLineItems(List<LineItem> lineItems) {
-        this.lineItems = lineItems;
     }
 
     ShoppingCart incorporate(CartEvent cartEvent) {

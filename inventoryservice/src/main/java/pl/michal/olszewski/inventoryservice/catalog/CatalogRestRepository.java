@@ -25,7 +25,7 @@ public class CatalogRestRepository {
         log.info("Pobieram katalog po id {}", catalogId);
         return Optional.ofNullable(catalogService.getProductsForCatalog(catalogId))
                 .map(result -> {
-                    log.info("Pobrałem produkty {}", result.toString());
+                    log.debug("Pobrałem produkty {}", result);
                     return new ResponseEntity<>(result, HttpStatus.OK);
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -35,7 +35,7 @@ public class CatalogRestRepository {
     public ResponseEntity getProducstFromCatalogNumber(@RequestParam("catalogNumber") Long catalogNumber) {
         return Optional.ofNullable(catalogService.getCatalogByCatalogNumber(catalogNumber))
                 .map(result -> {
-                    log.info("Pobrałem kategorie {}", result.toString());
+                    log.debug("Pobrałem kategorie {}", result);
                     return new ResponseEntity<>(result, HttpStatus.OK);
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

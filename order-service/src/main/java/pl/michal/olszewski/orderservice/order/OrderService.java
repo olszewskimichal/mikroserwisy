@@ -37,15 +37,13 @@ public class OrderService {
         Order newOrder = new Order(defaultAccount.getUserName(), defaultAccount.getShippingAddress());
         newOrder.setLineItems(new HashSet<>(lineItems));
         newOrder = orderRepository.save(newOrder);
-        log.info(newOrder.toString());
+        log.debug("Zamowienie po stworzeniu wyglada {}", newOrder);
         return newOrder;
     }
 
     public Boolean addOrderEvent(OrderEvent orderEvent) {
         log.info("Próba dodania zdarzenia dla zamowienia {}", orderEvent);
-        // Get the order for the event
         Order order = orderRepository.findOne(orderEvent.getOrderId());
-        // Save the order event
         orderEventRepository.save(orderEvent);
         return true;
     }

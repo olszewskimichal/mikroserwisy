@@ -27,7 +27,7 @@ public class AccountService {
             return accounts;
         }
         accounts = accountRepository.findAccountsByUserName(user.getUserName());
-        log.info("Konta uzytkownika {} to {}", user, accounts);
+        log.debug("Konta uzytkownika {} to {}", user, accounts);
         return accounts;
     }
 }
