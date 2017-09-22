@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: online-store-web
+server:
+  port: 8787
+logging:
+  path: F:/kibana/logi/
+  file: F:/kibana/logi/online_store_web_service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%t] %-40.40logger{39} : %m%n%wEx"

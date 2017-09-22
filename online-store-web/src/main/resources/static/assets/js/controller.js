@@ -91,7 +91,7 @@ contentApp.factory('orderService', function () {
 
 contentApp.controller('ProductListCtrl', ['$scope', '$http', '$templateCache',
     function ($scope, $http, $templateCache) {
-        $scope.url = 'http://localhost:8083/api/v1/catalog';
+        $scope.url = 'catalog-service/api/v1/catalog';
         $scope.products = [];
 
         var fetchProducts = function () {
@@ -110,7 +110,7 @@ contentApp.controller('ProductListCtrl', ['$scope', '$http', '$templateCache',
 
 contentApp.controller('AccountCtrl', ['$scope', '$http', '$templateCache',
     function ($scope, $http) {
-        $scope.url = 'http://localhost:8081/api/v1/accounts';
+        $scope.url = 'account-service/api/v1/accounts';
         $scope.accounts = {};
 
         var fetchAccounts = function () {
@@ -129,7 +129,7 @@ contentApp.controller('AccountCtrl', ['$scope', '$http', '$templateCache',
 
 contentApp.controller('CartCtrl', ['$scope', '$http', '$templateCache',
     function ($scope, $http) {
-        $scope.url = 'http://localhost:8085/api/v1/cart';
+        $scope.url = 'shopping-cart-service/api/v1/cart';
         $scope.cart = {};
 
         $scope.$on('cartEvents', function (event, msg) {
@@ -160,8 +160,8 @@ contentApp.controller('CartCtrl', ['$scope', '$http', '$templateCache',
 
 contentApp.controller('HeaderCtrl', ['$scope', '$http',
     function ($scope, $http) {
-        $scope.authUrl = 'http://localhost:8080/api/v1/users/user/test';
-        $scope.meUrl = 'http://localhost:8080/api/v1/users/user/test';
+        $scope.authUrl = 'user-service/api/v1/users/user/test';
+        $scope.meUrl = 'user-service/api/v1/users/user/test';
         $scope.user = {};
 
         $scope.logout = function () {
@@ -241,7 +241,7 @@ contentApp.directive('carouselrelatedproducts', function () {
 contentApp.controller('OrderListCtrl', ['$scope', '$http', '$location', 'orderService', '$routeParams',
     function ($scope, $http, $location, orderService, $routeParams) {
         // Get account
-        $scope.accountsUrl = 'http://localhost:8081/api/v1/accounts';
+        $scope.accountsUrl = 'account-service/api/v1/accounts';
         $scope.accounts = {};
 
         var fetchAccounts = function () {
@@ -253,7 +253,7 @@ contentApp.controller('OrderListCtrl', ['$scope', '$http', '$location', 'orderSe
                 console.log($scope.accounts)
                 var defaultAccount = $scope.accounts[0];
 
-                $scope.orderListUrl = 'http://localhost:8086/api/v1/accounts/' + defaultAccount.userName + "/orders";
+                $scope.orderListUrl = 'order-service/api/v1/accounts/' + defaultAccount.userName + "/orders";
 
                 var fetchOrders = function () {
                     $http({
@@ -288,7 +288,7 @@ contentApp.controller('OrderListCtrl', ['$scope', '$http', '$location', 'orderSe
 
 contentApp.controller('OrderCtrl', ['$scope', '$http', '$location', 'orderService', '$routeParams',
     function ($scope, $http, $location, orderService, $routeParams) {
-        $scope.orderItemUrl = 'http://localhost:8086/api/v1/orders/' + $routeParams.orderId;
+        $scope.orderItemUrl = 'order-service/api/v1/orders/' + $routeParams.orderId;
         var fetchOrder = function () {
             $http({
                 method: 'GET',
@@ -314,7 +314,7 @@ contentApp.controller('CheckoutCtrl', ['$scope', '$http', '$location', 'orderSer
     $scope.checkout = function () {
         var req = {
             method: 'POST',
-            url: 'http://localhost:8085/api/v1/checkout',
+            url: 'shopping-cart-service/api/v1/checkout',
             headers: {
                 'Content-Type': "application/json"
             },
@@ -344,7 +344,7 @@ contentApp.controller('AddToCartCtrl', ['$scope', '$http', function ($scope, $ht
         if ($scope.qty && $scope.qty > 0) {
             var req = {
                 method: 'POST',
-                url: 'http://localhost:8085/api/v1/events',
+                url: 'shopping-cart-service/api/v1/events',
                 headers: {
                     'Content-Type': "application/json"
                 },
@@ -390,7 +390,7 @@ contentApp.controller('UpdateCartCtrl', ['$rootScope', '$scope', '$http', '$loca
             if (delta >= 0) {
                 var req = {
                     method: 'POST',
-                    url: 'http://localhost:8085/api/v1/events',
+                    url: 'shopping-cart-service/api/v1/events',
                     headers: {
                         'Content-Type': "application/json"
                     },
@@ -453,8 +453,8 @@ contentApp.controller('UpdateCartCtrl', ['$rootScope', '$scope', '$http', '$loca
 contentApp.controller('ProductItemCtrl', ['$scope', '$routeParams', '$http',
     function ($scope, $routeParams, $http) {
         console.log($routeParams);
-        $scope.productItemUrl = 'http://localhost:8083/api/v1/catalog/products/' + $routeParams.id;
-        $scope.productsUrl = 'http://localhost:8083/api/v1/catalog';
+        $scope.productItemUrl = 'catalog-service/api/v1/catalog/products/' + $routeParams.id;
+        $scope.productsUrl = 'catalog-service/api/v1/catalog';
         $scope.products = [];
 
         $scope.$on('logout', function (event, msg) {

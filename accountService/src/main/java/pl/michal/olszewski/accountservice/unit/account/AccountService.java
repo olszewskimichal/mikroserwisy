@@ -22,7 +22,7 @@ public class AccountService {
     public List<Account> getUserAccounts() {
         log.info("pobieram konta uzytkownika ");
         List<Account> accounts = new ArrayList<>();
-        User user = restTemplate.getForObject("http://localhost:8080/api/v1/users/user/test", User.class);
+        User user = restTemplate.getForObject("http://localhost:8787/user-service/api/v1/users/user/test", User.class);
         if (user == null) {
             return accounts;
         }
