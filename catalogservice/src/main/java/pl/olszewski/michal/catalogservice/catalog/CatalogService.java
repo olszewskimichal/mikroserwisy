@@ -22,18 +22,18 @@ public class CatalogService {
 
     public Product getProduct(String productName) {
         log.info("pobieram produkt o nazwie {}", productName);
-        return restTemplate.getForObject(String.format("http://localhost:8082/api/v1/products/%s",
+        return restTemplate.getForObject(String.format("http://localhost:8787/inventory-service/api/v1/products/%s",
                 productName), Product.class);
     }
 
     private Catalog getCatalogFromAPI(Long catalogId) {
-        return restTemplate.getForObject(String.format("http://localhost:8082/api/v1/catalogs/search/findCatalogByCatalogNumber?catalogNumber=%s",
+        return restTemplate.getForObject(String.format("http://localhost:8787/inventory-service/api/v1/catalogs/search/findCatalogByCatalogNumber?catalogNumber=%s",
                 catalogId), Catalog.class);
     }
 
     private List<Product> getProductsFromAPI(Catalog catalog) {
         log.info("pobieram produkty z danego katalogu {}", catalog);
-        return Arrays.asList(restTemplate.getForObject(String.format("http://localhost:8082/api/v1/catalogs/%s/products",
+        return Arrays.asList(restTemplate.getForObject(String.format("http://localhost:8787/inventory-service/api/v1/catalogs/%s/products",
                 catalog.getId()), Product[].class));
     }
 

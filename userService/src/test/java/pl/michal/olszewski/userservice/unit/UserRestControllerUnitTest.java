@@ -10,6 +10,7 @@ import pl.michal.olszewski.userservice.api.UserRestController;
 import pl.michal.olszewski.userservice.user.User;
 import pl.michal.olszewski.userservice.user.UserService;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +31,7 @@ public class UserRestControllerUnitTest {
     }
 
     @Test
-    public void shouldReturnUser() {
+    public void shouldReturnUser() throws UserPrincipalNotFoundException {
         User user = new User();
         given(userService.getUserByUserName("user")).willReturn(Optional.of(user));
         ResponseEntity<User> userResponseEntity = userRestController.getUserByUserName("user");
@@ -40,7 +41,7 @@ public class UserRestControllerUnitTest {
     }
 
     @Test
-    public void shouldFailedWhenUserNotExist() {
+    public void shouldFailedWhenUserNotExist() throws UserPrincipalNotFoundException {
         given(userService.getUserByUserName("userss")).willReturn(Optional.empty());
         ResponseEntity<User> userResponseEntity = userRestController.getUserByUserName("userss");
         assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

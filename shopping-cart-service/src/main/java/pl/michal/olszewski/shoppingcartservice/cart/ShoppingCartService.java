@@ -38,7 +38,7 @@ public class ShoppingCartService {
 
     private User getAuthenticatedUser() {
         log.info("Pobieram przez API zalogowanego uzytkownika");
-        return restTemplate.getForObject("http://localhost:8080/api/v1/users/user/test", User.class);
+        return restTemplate.getForObject("http://localhost:8787/user-service/api/v1/users/user/test", User.class);
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class ShoppingCartService {
         User user = getAuthenticatedUser();
         ShoppingCart shoppingCart = null;
         if (user != null) {
-            Catalog catalog = restTemplate.getForObject("http://localhost:8083/api/v1/catalog", Catalog.class);
+            Catalog catalog = restTemplate.getForObject("http://localhost:8787/catalog-service/api/v1/catalog", Catalog.class);
             log.debug("Pobrałem katalog {} przez REST i teraz bede agregowac eventy", catalog);
             shoppingCart = aggregateCartEvents(user, catalog);
         }
@@ -102,7 +102,7 @@ public class ShoppingCartService {
         if (currentCart != null) {
             currentCart.convertLineItems();
             // Reconcile the current cart with the available inventory
-            Inventory[] inventory = restTemplate.getForObject(String.format("http://localhost:8082/api/v1/inventory?productNames=%s", currentCart.getLineItems()
+            Inventory[] inventory = restTemplate.getForObject(String.format("http://localhost:8787/inventory-service/api/v1/inventory?productNames=%s", currentCart.getLineItems()
                     .stream()
                     .map(v -> v.getProduct().getName()).map(Object::toString)
                     .collect(Collectors.joining(","))), Inventory[].class);
@@ -117,7 +117,7 @@ public class ShoppingCartService {
                     // Reserve the available inventory
 
                     // Create a new order
-                    Order orderResponse = restTemplate.postForObject("http://localhost:8086/api/v1/orders",
+                    Order orderResponse = restTemplate.postForObject("http://localhost:8787/order-service/api/v1/orders",
                             currentCart.getLineItems().stream()
                                     .map(prd ->
                                             new OrderLineItem(prd.getProduct().getName(), prd.getProductId(), prd.getQuantity(), prd.getProduct().getUnitPrice(), TAX))
@@ -130,7 +130,7 @@ public class ShoppingCartService {
 
                         // Add order event
                         log.info("Zamowienie stworzone {}",orderResponse);
-                        restTemplate.postForEntity(String.format("http://localhost:8086/api/v1/orders/%s/events", orderResponse.getOrderId()), new OrderEvent(OrderEventType.CREATED, orderResponse.getOrderId()), ResponseEntity.class);
+                        restTemplate.postForEntity(String.format("http://localhost:8787/order-service/api/v1/orders/%s/events", orderResponse.getOrderId()), new OrderEvent(OrderEventType.CREATED, orderResponse.getOrderId()), ResponseEntity.class);
                         checkoutResult.setOrder(orderResponse);
                     }
 

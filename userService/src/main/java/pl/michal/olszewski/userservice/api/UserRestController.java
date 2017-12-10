@@ -11,7 +11,6 @@ import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.Principal;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 @RequestMapping("/api/v1/users/")
@@ -27,10 +26,10 @@ public class UserRestController {
     }
 
     @RequestMapping(path = "/user/{userName}")
-    public ResponseEntity<User> getUserByUserName(@PathVariable(value = "userName") String userName) {
+    public ResponseEntity<User> getUserByUserName(@PathVariable(value = "userName") String userName) throws UserPrincipalNotFoundException {
         log.info("Próba pobrania uzytkownika {}", userName);
         Optional<User> userByUserName = userService.getUserByUserName(userName);
-        return userByUserName.flatMap(v -> Optional.of(new ResponseEntity<>(v, OK))).orElseGet(() -> new ResponseEntity<>(new User(), NOT_FOUND));
+        return userByUserName.flatMap(v -> Optional.of(new ResponseEntity<>(v, OK))).orElseThrow(() -> new UserPrincipalNotFoundException(userName));
     }
 
     @RequestMapping(path = "/me")

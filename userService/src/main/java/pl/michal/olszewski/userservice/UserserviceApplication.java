@@ -5,12 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import pl.michal.olszewski.userservice.user.User;
 import pl.michal.olszewski.userservice.user.UserRepository;
 
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableEurekaClient
+@EnableHystrix
 @Slf4j
 public class UserserviceApplication implements CommandLineRunner {
 

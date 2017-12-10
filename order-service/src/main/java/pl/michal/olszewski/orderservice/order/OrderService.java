@@ -26,7 +26,7 @@ public class OrderService {
     }
 
     public Order createOrder(List<OrderLineItem> lineItems) {
-        Account[] accounts = restTemplate.getForObject("http://localhost:8081/api/v1/accounts", Account[].class);
+        Account[] accounts = restTemplate.getForObject("http://localhost:8787/account-service/api/v1/accounts", Account[].class);
 
         Account defaultAccount = Arrays.stream(accounts)
                 .findFirst()

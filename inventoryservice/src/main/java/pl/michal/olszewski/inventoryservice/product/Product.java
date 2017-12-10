@@ -5,6 +5,7 @@ import lombok.*;
 import pl.michal.olszewski.inventoryservice.catalog.Catalog;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
-public class Product {
+public class Product implements Serializable {
     @Id
     @GeneratedValue
     private Long id;

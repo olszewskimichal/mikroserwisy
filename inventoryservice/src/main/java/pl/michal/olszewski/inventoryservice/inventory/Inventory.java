@@ -5,10 +5,11 @@ import pl.michal.olszewski.inventoryservice.product.Product;
 import pl.michal.olszewski.inventoryservice.warehouse.Warehouse;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Data
-public class Inventory {
+public class Inventory implements Serializable {
 
     @Id
     @GeneratedValue

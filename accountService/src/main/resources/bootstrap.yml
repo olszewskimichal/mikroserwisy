@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: account-service
+  jpa:
+    show-sql: true
+  cloud:
+    config:
+      uri: http://localhost:8888
+logging:
+  path: F:/kibana/logi/
+  file: F:/kibana/logi/account_service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%t] %-40.40logger{39} : %m%n%wEx"
+  level:
+    org.hibernate.SQL: debug
+server:
+  port: 0
